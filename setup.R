@@ -26,4 +26,5 @@ create_package("hismatch")
 #  use_package(i)
 #}
 
-document()
+devtools::document()
+devtools::install()
