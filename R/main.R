@@ -36,17 +36,17 @@ createBlocks <- function(data, block=c('')){
 #' @export
 setupData <- function(data, firstname, surname, block_vector, suffix){
   
-  dta_full <- addLinkingVariables(data_input=data, 
-                                   firstname_input=firstname, 
-                                   lastname_input=surname)
+  dta_full <- hismatch:::addLinkingVariables(data_input=data, 
+                                   firstname_input=paste0(firstname), 
+                                   lastname_input=paste0(firstname))
   
-  dta_comp <- createLinkingData(dta_full,
+  dta_comp <- hismatch:::createLinkingData(dta_full,
                                  block=block_vector)
   
-  setNames(dta_full, suffix=suffix, block=block_vector)
-  setNames(dta_comp, suffix=suffix, block=block_vector)
+  hismatch:::setNames(dta_full, suffix=suffix, block=block_vector)
+  hismatch:::setNames(dta_comp, suffix=suffix, block=block_vector)
   
-  blocks <- createBlocks(dta_comp, 
+  blocks <- hismatch:::createBlocks(dta_comp, 
                          block=block_vector)
   
   return(list(dta_full, dta_comp, blocks))
@@ -55,15 +55,16 @@ setupData <- function(data, firstname, surname, block_vector, suffix){
 #' Fuzzy mathing
 #' @export
 fuzzyMatch<- function(data1, data2, block_number, blocks_tmp, dist_thr, rel_thr, blocks){
+
   for (blocks_variable in blocks) {
-    data1 <- data1[get(blocks_variable)==blocks_tmp[[c(block_number), blocks_variable]]]
-    data2 <- data2[get(blocks_variable)==blocks_tmp[[c(block_number), blocks_variable]]]
+    data1 <- data1[blocks_variable==paste0(blocks_tmp[[c(block_number), blocks_variable]])]
+    data2 <- data2[blocks_variable==paste(blocks_tmp[[c(block_number), blocks_variable]])]
   }
   
   merge_dataset <- merge(data1, data2, by=blocks, allow.cartesian=TRUE)
   
   # string distance and execute matching rules
-  merge_dataset <- merge_dataset[,dist:=stringsim(full_name_1, full_name_2, method = c("jw"))][
+  merge_dataset <- merge_dataset[,dist:=stringdist::stringsim(full_name_1, full_name_2, method = c("jw"))][
     , rank1 := frank(-dist, ties.method='max'), by = "masterID_1"][
     , rank2 := frank(-dist, ties.method='max'), by = "masterID_2"][
     order(-dist)]
@@ -72,32 +73,29 @@ fuzzyMatch<- function(data1, data2, block_number, blocks_tmp, dist_thr, rel_thr,
     rank1==2, sum1:=mean(dist), by="masterID_1"][
     rank2==2, sum2:=mean(dist), by="masterID_2"][
     , rel1:=mean(sum1, na.rm=T)/dist, by="masterID_1"][
-    , rel2:=mean(sum2, na.rm=T)/dist, by="masterID_2"][
-    , sum1:=NULL][, sum2:=NULL]
+    , rel2:=mean(sum2, na.rm=T)/dist, by="masterID_2"]
   
   merge_dataset[
-    rank1==1 & rank2==1][
-    rel1<rel_thr | is.na(rel1)][
-    rel2<rel_thr | is.na(rel2)][
-    dist>dist_thr]
+    rank1==1 & rank2==1]
 }
 
 #' Loop over fuzzy matching using the future package
 #' @export
-executeLinking <- function(data1, data2, blocks_data, dist_thr, rel_thr, blocks) {
+executeLinking <- memoise::memoise(function(data1, data2, blocks_data, 
+        dist_thr, rel_thr, blocks) {
   p <- progressor(steps = nrow(blocks_data))
   
   future_map_dfr(1:nrow(blocks_data), ~{
     p()
-    fuzzyMatch(data1=data1, 
+    hismatch:::fuzzyMatch(data1=data1, 
                data2=data2, 
-               .x, 
+               block_number=.x, 
                blocks_tmp=blocks_data,
                dist_thr=dist_thr, 
                rel_thr=rel_thr, 
                blocks=blocks)
   })
-}
+}, cache=cachem::cache_disk(rappdirs::user_cache_dir("hismatch")))
 
 #' Merge back in full data
 #' @export
@@ -121,21 +119,23 @@ vectorReorder <- function(dataset, blocks){
 run <- function(data1, data2, firstname=NULL, surname=NULL, 
                 firstname1=NULL, surname1=NULL, 
                 firstname2=NULL, surname2=NULL,
-                dist_thr, rel_thr, blocks){
+                dist_thr, rel_thr, blocks, workers_input=1){
   
+  future::plan(multisession, workers = workers_input)
+
   if (is.not.null(firstname) & is.not.null(surname)) {
     firstname1 <- firstname;firstname2 <- firstname
     surname1 <- surname;surname2 <-surname
   }
 
-  tmp1 <- setupData(data=data1,
+  tmp1 <- hismatch:::setupData(data=data1,
                      firstname=paste0(firstname1), 
                      surname=paste0(surname1), 
                      block_vector = blocks, 
                      suffix='_1')
   
   
-  tmp2 <- setupData(data=data2,
+  tmp2 <- hismatch:::setupData(data=data2,
                      firstname=paste0(firstname2), 
                      surname=paste0(surname2), 
                      block_vector = blocks, 
@@ -145,16 +145,20 @@ run <- function(data1, data2, firstname=NULL, surname=NULL,
   blocks_tmp <- merge(tmp1[[3]], tmp2[[3]], by=c(blocks))
   
   merged_data <- with_progress({
-    executeLinking(data1=tmp1[[2]], 
+    hismatch:::executeLinking(data1=tmp1[[2]], 
                    data2=tmp2[[2]],
                    blocks_data=blocks_tmp, 
                    dist_thr=dist_thr, 
                    rel_thr=rel_thr, 
                    blocks=blocks)
   })
+
+  if(rel_thr!=FALSE){merged_data <- merged_data[rel1<rel_thr | is.na(rel1)][rel2<rel_thr | is.na(rel2)]}
+  if(dist_thr!=FALSE){merged_data <- merged_data[dist>dist_thr]}
   
-  merged_data <- mergeBackInData(merged_data, tmp1[[1]], tmp2[[1]][,c(blocks):=NULL])
-  merged_data <- vectorReorder(dataset=merged_data, blocks=blocks)
+  merged_data <- hismatch:::mergeBackInData(merged_data, tmp1[[1]], tmp2[[1]][,c(blocks):=NULL])
+  merged_data <- hismatch:::vectorReorder(dataset=merged_data, blocks=blocks)
+
   return(list(merged_data, tmp1[[1]], tmp2[[1]]))
 }
 
@@ -192,9 +196,7 @@ getMatchingRatesByVariable <- function(merged_data, data, stat_variable){
   stat <- dta[,.(mean(dummySummary)), by=stat_variable]
   
   names(stat) <- c('group', 'matching_rate')
-  stat <- stat[, type:=stat_variable][
-    , matching_rate:=matching_rate]
-  return(stat)
+  stat[, type:=stat_variable][, matching_rate:=matching_rate]
 }
 
 #' Plot matching statistics by variable
@@ -208,7 +210,7 @@ plotMatchingByGroup <- function(matching_data, type_restriction){
 #' Convert list of matching statistics from 'plotMatchingByGroup' to data.frame
 #' @export
 getMatchingRatesByVariable_DT <- function(variable_list, merged_data, data){
-  matchingData <- lapply(variable_list, getMatchingRatesByVariable, 
+  matchingData <- lapply(variable_list, hismatch:::getMatchingRatesByVariable, 
     merged_data=merged_data, 
     data=data)
   do.call(rbind.data.frame, matchingData)

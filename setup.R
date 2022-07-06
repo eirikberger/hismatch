@@ -18,9 +18,8 @@ create_package("hismatch")
 #install()
 #use_package("")
 
-
-#packages <- c('future', 'stringr', 'plyr', 'data.table', 'stringdist', 'furrr', 'progress',
-#               'purrr', 'progressr', 'ggsci', 'scales', 'ggplot2')
+packages <- c('future', 'stringr', 'plyr', 'data.table', 'stringdist', 'furrr', 'progress',
+               'purrr', 'progressr', 'ggsci', 'scales', 'ggplot2')
 
 #for (i in packages){
 #  use_package(i)

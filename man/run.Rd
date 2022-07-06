@@ -15,7 +15,8 @@ run(
   surname2 = NULL,
   dist_thr,
   rel_thr,
-  blocks
+  blocks,
+  workers_input = 1
 )
 }
 \description{
