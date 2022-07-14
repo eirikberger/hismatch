@@ -4,7 +4,7 @@
 \alias{createLinkingData}
 \title{Create parsimonious dataset for linking}
 \usage{
-createLinkingData(data_input, block = c(""))
+createLinkingData(data_input)
 }
 \description{
 Create parsimonious dataset for linking

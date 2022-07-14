@@ -4,7 +4,7 @@
 \alias{setupData}
 \title{Setup for linking using other functions}
 \usage{
-setupData(data, firstname, surname, block_vector, suffix)
+setupData(data_input, suffix)
 }
 \description{
 Setup for linking using other functions

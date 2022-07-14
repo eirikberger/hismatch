@@ -13,12 +13,11 @@ Depends:
     furrr,
     future,
     ggplot2,
-    ggsci,
-    plyr,
-    progress,
     progressr,
-    purrr,
-    scales,
     stringr
 Imports:
-    stringdist
+    stringdist, 
+    dplyr, 
+    scales, 
+    purrr
+    

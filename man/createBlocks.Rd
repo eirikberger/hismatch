@@ -4,7 +4,7 @@
 \alias{createBlocks}
 \title{Create blocks}
 \usage{
-createBlocks(data, block = c(""))
+createBlocks(data)
 }
 \description{
 Create blocks

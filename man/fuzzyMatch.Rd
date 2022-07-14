@@ -4,7 +4,7 @@
 \alias{fuzzyMatch}
 \title{Fuzzy mathing}
 \usage{
-fuzzyMatch(data1, data2, block_number, blocks_tmp, dist_thr, rel_thr, blocks)
+fuzzyMatch(data1, data2, block_number, blocks_tmp, blocks)
 }
 \description{
 Fuzzy mathing

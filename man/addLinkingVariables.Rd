@@ -4,7 +4,7 @@
 \alias{addLinkingVariables}
 \title{Create variables to link on}
 \usage{
-addLinkingVariables(data_input, firstname_input, lastname_input)
+addLinkingVariables(data_input)
 }
 \description{
 Create variables to link on

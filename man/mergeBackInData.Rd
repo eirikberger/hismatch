@@ -2,10 +2,10 @@
 % Please edit documentation in R/main.R
 \name{mergeBackInData}
 \alias{mergeBackInData}
-\title{Merge back in full data}
+\title{Merge back in full datas}
 \usage{
 mergeBackInData(merged_data, master1, master2)
 }
 \description{
-Merge back in full data
+Merge back in full datas
 }

@@ -4,7 +4,7 @@
 \alias{setNames}
 \title{Names names ('_1' and '_2')}
 \usage{
-setNames(data_input, suffix, block = c(""))
+setNames(data_input, suffix)
 }
 \description{
 Names names ('_1' and '_2')

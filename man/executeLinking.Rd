@@ -4,7 +4,7 @@
 \alias{executeLinking}
 \title{Loop over fuzzy matching using the future package}
 \usage{
-executeLinking(data1, data2, blocks_data, dist_thr, rel_thr, blocks)
+executeLinking(data1, data2, blocks_data)
 }
 \description{
 Loop over fuzzy matching using the future package
