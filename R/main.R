@@ -148,7 +148,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             if(self$dist_thr!=FALSE){
                               merged_data <- merged_data[dist>self$dist_thr]}
                             
-                            merged_data <- self$mergeBackInData(merged_data, self$data1_pros, self$data1_pros[,c(self$blocks):=NULL])
+                            merged_data <- self$mergeBackInData(merged_data, self$data1_pros, self$data2_pros[,c(self$blocks):=NULL])
                             merged_data <- self$vectorReorder(dataset=merged_data)
                             
                             self$full_match <- merged_data
