@@ -25,5 +25,6 @@ packages <- c('future', 'stringr', 'plyr', 'data.table', 'stringdist', 'furrr', 
 #  use_package(i)
 #}
 
-devtools::document()
+devtools::check()
+#devtools::document()
 devtools::install()
