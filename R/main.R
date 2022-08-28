@@ -1,6 +1,18 @@
 #' R6 Class for linking historical data sources
 #'
 #' @importFrom R6 R6Class
+#' @param data1 input data 1
+#' @param data2 input data 2
+#' @param firstname firstname (string)
+#' @param surname surname (string)
+#' @param blocks blocking variables (vector)
+#' @param dist_thr threshold for linking (quality of match)
+#' @param rel_thr threshold for linking (must be sufficiently better than next best match)
+#' @param workers number of cores used
+#' @field full_match data output
+#' @field data1_pros data output
+#' @field data2_pros data output
+#' @field matching_by_variable for post-match statistics
 #' @export
 Hismatch <- R6Class("Hismatch",
   public = list(

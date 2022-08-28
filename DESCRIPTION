@@ -1,13 +1,13 @@
 Package: hismatch
-Title: What the Package Does (One Line, Title Case)
+Title: Linking indvidivual-level data
 Version: 0.1
 Authors@R: 
     person("Eirik", "Berger", , "eirik.berger@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: Linking indvidivual-level data
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Import:
     R6,
     data.table,
