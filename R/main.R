@@ -33,9 +33,9 @@ Hismatch <- R6::R6Class("Hismatch",
                             self$matching_by_variable <- NULL
                           }, 
                           
-                          addLinkingVariables = function(data_input){
-                            data_input[, full_name:=tolower(paste(get(self$firstname, envir = self), get(self$surname, envir = self)))][
-                              , l_first := str_match(tolower(get(self$firstname, envir = self)), "(^[:alpha:])")[,1]][
+                          addLinkingVariables = function(data_input, firstname, surname){
+                            data_input[, full_name:=tolower(paste(firstname, surname))][
+                              , l_first := str_match(tolower(firstname), "(^[:alpha:])")[,1]][
                               !is.na(l_first)][, l_sur := str_match(full_name, " ([:alpha:])[a-zæøå.]*?$")[,2]][
                               !is.na(l_sur)][, masterID := .I]
                           },
@@ -59,7 +59,7 @@ Hismatch <- R6::R6Class("Hismatch",
                           
                           setupData = function(data_input, suffix){
                             
-                            dta_full <- self$addLinkingVariables(data_input=data_input)
+                            dta_full <- self$addLinkingVariables(data_input=data_input, self$firstname, self$surname)
                             dta_comp <- self$createLinkingData(dta_full)  
                             self$setNames(dta_full, suffix=suffix)
                             self$setNames(dta_comp, suffix=suffix)
