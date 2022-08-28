@@ -34,8 +34,8 @@ Hismatch <- R6::R6Class("Hismatch",
                           }, 
                           
                           addLinkingVariables = function(data_input){
-                            sf <- paste0(self$firstname)
-                            ss <- paste0(self$surname)
+                            sf <<- paste0(self$firstname)
+                            ss <<- paste0(self$surname)
                             data_input[, full_name:=tolower(paste(get(sf), get(ss)))][
                               , l_first := str_match(tolower(sf), "(^[:alpha:])")[,1]][
                                 !is.na(l_first)][, l_sur := str_match(full_name, " ([:alpha:])[a-zæøå.]*?$")[,2]][
