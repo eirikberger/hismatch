@@ -34,14 +34,13 @@ Hismatch <- R6::R6Class("Hismatch",
                           }, 
                           
                           addLinkingVariables = function(data_input){
-                            sf <<- paste0(self$firstname)
-                            ss <<- paste0(self$surname)
-                            print(ss)
-                            data_input[, full_name:=tolower(paste(get(sf), get(ss)))][
-                              , l_first := str_match(tolower(sf), "(^[:alpha:])")[,1]][
-                                !is.na(l_first)][, l_sur := str_match(full_name, " ([:alpha:])[a-zæøå.]*?$")[,2]][
-                                  !is.na(l_sur)][, masterID := .I]
-                          },
+                            sf <- paste0()
+                            ss <- paste0()
+                            data_input[, full_name:=tolower(paste(data_input[[self$firstname]], data_input[[self$surname]]))][
+                              , l_first := str_match(tolower(data_input[[self$firstname]]), "(^[:alpha:])")[,1]][
+                              !is.na(l_first)][, l_sur := str_match(full_name, " ([:alpha:])[a-zæøå.]*?$")[,2]][
+                              !is.na(l_sur)][, masterID := .I]
+                      },
                           
                           setNames = function(data_input, suffix){
                             for (j in colnames(data_input)){ 
@@ -79,14 +78,14 @@ Hismatch <- R6::R6Class("Hismatch",
                             merge_dataset <- merge_dataset[, dist:=stringsim(full_name_1, full_name_2, method = c("jw"))]
                             merge_dataset <- merge_dataset[
                               , rank1:=frank(-dist, ties.method='max'), by = "masterID_1"][
-                                , rank2:=frank(-dist, ties.method='max'), by = "masterID_2"][
-                                  order(-dist)]
+                              , rank2:=frank(-dist, ties.method='max'), by = "masterID_2"][
+                              order(-dist)]
                             
                             merge_dataset <- merge_dataset[
                               rank1==2, sum1:=mean(dist), by="masterID_1"][
-                                rank2==2, sum2:=mean(dist), by="masterID_2"][
-                                  , rel1:=mean(sum1, na.rm=T)/dist, by="masterID_1"][
-                                    , rel2:=mean(sum2, na.rm=T)/dist, by="masterID_2"]
+                              rank2==2, sum2:=mean(dist), by="masterID_2"][
+                              , rel1:=mean(sum1, na.rm=T)/dist, by="masterID_1"][
+                              , rel2:=mean(sum2, na.rm=T)/dist, by="masterID_2"]
                             
                             merge_dataset[rank1==1 & rank2==1]
                           },
@@ -102,17 +101,17 @@ Hismatch <- R6::R6Class("Hismatch",
                             data2 <- split(data2, data2$block_id)
                             
                             p <- progressr::progressor(steps = nrow(blocks_data))
-                            
+                                        
                             future_map2_dfr(data1, data2, ~{
                               p()
                               self$fuzzyMatch(.x, .y)
                             }, .options = furrr_options(packages=c('data.table', 'stringdist'), globals=FALSE))
                           },
-                          
+                                                  
                           mergeBackInData = function(merged_data, master1, master2){
                             skeleton <- merged_data[,.(masterID_1, masterID_2)]
                             skeleton <- merge(skeleton, master1, by='masterID_1')
-                            skeleton <- merge(skeleton, master2, by='masterID_2')
+                            skeleton <- merge(skeleton, master2, by='masterID_2') 
                             merge(merged_data[,.(dist, rel1, rel2, masterID_1, masterID_2)], skeleton, by=c('masterID_1', 'masterID_2'))
                           },
                           
@@ -184,7 +183,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             merged_data <- self$full_match[,.(masterID_1, masterID_2)]
                             
                             dta <- merge(data, merged_data, by=l, all=TRUE)
-                            dta <- dta[,dummySummary:=ifelse(is.na(get(m)),0,1)]
+                            dta <- dta[,dummySummary:=ifelse(is.na(dta[[m]]),0,1)]
                             
                             stat <- dta[,.(mean(dummySummary)), by=stat_variable]
                             
