@@ -1,3 +1,7 @@
+#' R6 Class representing two datasets to be linked.
+#'
+#' Has information on the two datasets, and the details of how to link them.
+#' @export
 Hismatch <- R6::R6Class("Hismatch",
                         public = list(
                           data1 = NULL,
@@ -14,9 +18,10 @@ Hismatch <- R6::R6Class("Hismatch",
                           merged_data = NULL,
                           
                           matching_by_variable = NULL,
+                          max_block_size = NULL,
                           
                           initialize = function(data1 = NA,  data2 = NA, firstname=NA, surname=NA, 
-                                                blocks=NA, dist_thr=0.75, rel_thr=NA) {
+                                                blocks=NA, dist_thr=0.75, rel_thr=NA, max_block_size=50000) {
                             self$data1 <- data.table::copy(data1)
                             self$data2 <- data.table::copy(data2)
                             self$firstname <- firstname
@@ -31,14 +36,18 @@ Hismatch <- R6::R6Class("Hismatch",
                             self$merged_data <- NULL
                             
                             self$matching_by_variable <- NULL
+                            self$max_block_size <- max_block_size
                           }, 
                           
+                          print = function() {
+                            print(self$getStatistics())
+                          },
+                          
                           addLinkingVariables = function(data_input){
-                            sf <- paste0()
-                            ss <- paste0()
-                            data_input[, full_name:=tolower(paste(data_input[[self$firstname]], data_input[[self$surname]]))][
-                              , l_first := str_match(tolower(data_input[[self$firstname]]), "(^[:alpha:])")[,1]][
-                              !is.na(l_first)][, l_sur := str_match(full_name, " ([:alpha:])[a-zæøå.]*?$")[,2]][
+                            usethis::use_data_table()
+                            data_input[, full_name:=tolower(paste(self$firstname, self$surname))][
+                              , l_first := stringr::str_match(tolower(self$firstname), "(^[:alpha:])")[,1]][
+                              !is.na(l_first)][, l_sur := stringr::str_match(full_name, " ([:alpha:])[a-zæøå.]*?$")[,2]][
                               !is.na(l_sur)][, masterID := .I]
                       },
                           
@@ -72,10 +81,14 @@ Hismatch <- R6::R6Class("Hismatch",
                           
                           fuzzyMatch = function(data1, data2){
                             
-                            merge_dataset <- merge(data1, data2, by='block_id', allow.cartesian=TRUE)
+                            if (length(data1)*length(data1)>self$max_block_size){
+                              stop(paste('Block is too large (l_first: ', data1[['l_first']][1], ', l_sur: ', data1[['l_sur']][1], ')'))
+                            }
                             
+                            merge_dataset <- merge(data1, data2, by='block_id', allow.cartesian=TRUE)
+
                             # string distance and execute matching rules
-                            merge_dataset <- merge_dataset[, dist:=stringsim(full_name_1, full_name_2, method = c("jw"))]
+                            merge_dataset <- merge_dataset[, dist:=stringdist::stringsim(full_name_1, full_name_2, method = c("jw"))]
                             merge_dataset <- merge_dataset[
                               , rank1:=frank(-dist, ties.method='max'), by = "masterID_1"][
                               , rank2:=frank(-dist, ties.method='max'), by = "masterID_2"][
@@ -105,7 +118,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             future_map2_dfr(data1, data2, ~{
                               p()
                               self$fuzzyMatch(.x, .y)
-                            }, .options = furrr_options(packages=c('data.table', 'stringdist'), globals=FALSE))
+                            }, .options = furrr_options(globals=FALSE, stdout=FALSE))
                           },
                                                   
                           mergeBackInData = function(merged_data, master1, master2){
@@ -133,7 +146,7 @@ Hismatch <- R6::R6Class("Hismatch",
                               
                               blocks_tmp <- merge(tmp1[[3]], tmp2[[3]], by=c(self$blocks))
                               
-                              merged_data <- with_progress({
+                              merged_data <- progressr::with_progress({
                                 self$executeLinking(data1=tmp1[[2]], data2=tmp2[[2]], blocks_data=blocks_tmp)
                               })
                               
@@ -212,15 +225,19 @@ Hismatch <- R6::R6Class("Hismatch",
 
 #--------------------------------------------------
 
+#' @export
 `%nin%` <- Negate(`%in%`)
 
+#' @export
 `is.not.null` <- Negate(`is.null`)
 
+#' @export
 saveHismatch = function(class_name, filepath){
   code_string <- paste0('saveRDS(', class_name, ', "', filepath, '")')
   eval(parse(text=code_string))
 }
 
+#' @export
 readHismatchClass = function(filepath){
   readRDS(here::here(filepath))
 }

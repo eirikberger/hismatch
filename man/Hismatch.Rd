@@ -2,29 +2,15 @@
 % Please edit documentation in R/main.R
 \name{Hismatch}
 \alias{Hismatch}
-\title{R6 Class for linking historical data sources}
+\title{R6 Class representing two datasets to be linked.}
 \description{
-R6 Class for linking historical data sources
-
-R6 Class for linking historical data sources
-}
-\section{Public fields}{
-\if{html}{\out{<div class="r6-fields">}}
-\describe{
-\item{\code{full_match}}{data output}
-
-\item{\code{data1_pros}}{data output}
-
-\item{\code{data2_pros}}{data output}
-
-\item{\code{matching_by_variable}}{for post-match statistics}
-}
-\if{html}{\out{</div>}}
+Has information on the two datasets, and the details of how to link them.
 }
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-Hismatch-new}{\code{Hismatch$new()}}
+\item \href{#method-Hismatch-print}{\code{Hismatch$print()}}
 \item \href{#method-Hismatch-addLinkingVariables}{\code{Hismatch$addLinkingVariables()}}
 \item \href{#method-Hismatch-setNames}{\code{Hismatch$setNames()}}
 \item \href{#method-Hismatch-createLinkingData}{\code{Hismatch$createLinkingData()}}
@@ -55,31 +41,19 @@ R6 Class for linking historical data sources
   blocks = NA,
   dist_thr = 0.75,
   rel_thr = NA,
-  workers = 2
+  max_block_size = 50000
 )}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{data1}}{input data 1}
-
-\item{\code{data2}}{input data 2}
-
-\item{\code{firstname}}{firstname (string)}
-
-\item{\code{surname}}{surname (string)}
-
-\item{\code{blocks}}{blocking variables (vector)}
-
-\item{\code{dist_thr}}{threshold for linking (quality of match)}
-
-\item{\code{rel_thr}}{threshold for linking (must be sufficiently better than next best match)}
-
-\item{\code{workers}}{number of cores used}
 }
-\if{html}{\out{</div>}}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Hismatch-print"></a>}}
+\if{latex}{\out{\hypertarget{method-Hismatch-print}{}}}
+\subsection{Method \code{print()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Hismatch$print()}\if{html}{\out{</div>}}
 }
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Hismatch-addLinkingVariables"></a>}}
@@ -131,20 +105,9 @@ R6 Class for linking historical data sources
 \if{latex}{\out{\hypertarget{method-Hismatch-fuzzyMatch}{}}}
 \subsection{Method \code{fuzzyMatch()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Hismatch$fuzzyMatch(data1, data2, block_number, blocks_tmp, blocks)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Hismatch$fuzzyMatch(data1, data2)}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{data1}}{input data 1}
-
-\item{\code{data2}}{input data 2}
-
-\item{\code{blocks}}{blocking variables (vector)}
-}
-\if{html}{\out{</div>}}
-}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Hismatch-executeLinking"></a>}}
@@ -154,15 +117,6 @@ R6 Class for linking historical data sources
 \if{html}{\out{<div class="r">}}\preformatted{Hismatch$executeLinking(data1, data2, blocks_data)}\if{html}{\out{</div>}}
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{data1}}{input data 1}
-
-\item{\code{data2}}{input data 2}
-}
-\if{html}{\out{</div>}}
-}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Hismatch-mergeBackInData"></a>}}

@@ -3,18 +3,18 @@ Title: Linking indvidivual-level data
 Version: 0.1
 Authors@R: 
     person("Eirik", "Berger", , "eirik.berger@gmail.com", role = c("aut", "cre"))
-Description: Linking indvidivual-level data
+Description: Linking indvidivual-level data.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
-Import:
+Imports: 
     R6,
     data.table,
-    furrr, 
+    furrr,
     ggplot2,
     progressr,
-    stringr, 
-    stringdist, 
-    scales, 
-    progressr
+    R6,
+    scales,
+    stringdist,
+    stringr
