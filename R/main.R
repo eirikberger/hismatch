@@ -44,9 +44,8 @@ Hismatch <- R6::R6Class("Hismatch",
                           },
                           
                           addLinkingVariables = function(data_input){
-                            usethis::use_data_table()
-                            data_input[, full_name:=tolower(paste(self$firstname, self$surname))][
-                              , l_first := stringr::str_match(tolower(self$firstname), "(^[:alpha:])")[,1]][
+                            data_input[, full_name:=tolower(paste(eval(parse(text=self$firstname)), eval(parse(text=self$surname))))][
+                              , l_first := stringr::str_match(tolower(eval(parse(text=self$firstname))), "(^[:alpha:])")[,1]][
                               !is.na(l_first)][, l_sur := stringr::str_match(full_name, " ([:alpha:])[a-zæøå.]*?$")[,2]][
                               !is.na(l_sur)][, masterID := .I]
                       },
@@ -146,6 +145,14 @@ Hismatch <- R6::R6Class("Hismatch",
                               
                               blocks_tmp <- merge(tmp1[[3]], tmp2[[3]], by=c(self$blocks))
                               
+                              progressr::handlers(list(
+                                progressr::handler_progress(
+                                  format   = ":spin :current/:total (:message) [:bar] :percent in :elapsed ETA: :eta",
+                                  width    = 100,
+                                  complete = "+"
+                                )
+                              ))
+
                               merged_data <- progressr::with_progress({
                                 self$executeLinking(data1=tmp1[[2]], data2=tmp2[[2]], blocks_data=blocks_tmp)
                               })
