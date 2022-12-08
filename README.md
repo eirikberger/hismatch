@@ -10,6 +10,8 @@ The development version from [GitHub](https://github.com/) with:
 devtools::install_github("eirikberger/hismatch")
 ```
 
+Use `auth_token` option to use personal access tokens while the repo is still privat.
+
 ## Usage
 
 A brief example of how to setup the class and run it. 
