@@ -78,7 +78,13 @@ Hismatch <- R6::R6Class("Hismatch",
                             return(list(dta_full, dta_comp, blocks))
                           },
                           
-                          fuzzyMatch = function(data1, data2){
+                          fuzzyMatch = function(data1, data2, block_number, blocks_tmp, blocks){
+                            
+                            for (blocks_variable in blocks) {
+                              ex <- blocks_tmp[[c(block_number), blocks_variable]]
+                              data1 <- collapse::fsubset(data1, get(blocks_variable)==paste0(ex))
+                              data2 <- collapse::fsubset(data2, get(blocks_variable)==paste0(ex))
+                            }
                             
                             if (length(data1)*length(data1)>self$max_block_size){
                               stop(paste('Block is too large (l_first: ', data1[['l_first']][1], ', l_sur: ', data1[['l_sur']][1], ')'))
@@ -87,19 +93,15 @@ Hismatch <- R6::R6Class("Hismatch",
                             merge_dataset <- merge(data1, data2, by='block_id', allow.cartesian=TRUE)
 
                             # string distance and execute matching rules
-                            merge_dataset <- merge_dataset[, dist:=stringdist::stringsim(full_name_1, full_name_2, method = c("jw"))]
-                            merge_dataset <- merge_dataset[
-                              , rank1:=frank(-dist, ties.method='max'), by = "masterID_1"][
-                              , rank2:=frank(-dist, ties.method='max'), by = "masterID_2"][
-                              order(-dist)]
-                            
-                            merge_dataset <- merge_dataset[
-                              rank1==2, sum1:=mean(dist), by="masterID_1"][
-                              rank2==2, sum2:=mean(dist), by="masterID_2"][
-                              , rel1:=mean(sum1, na.rm=T)/dist, by="masterID_1"][
-                              , rel2:=mean(sum2, na.rm=T)/dist, by="masterID_2"]
-                            
-                            merge_dataset[rank1==1 & rank2==1]
+                            merge_dataset[, dist:=stringdist::stringsim(full_name_1, full_name_2, method = c("jw"))][
+                              , rank1:=data.table::frank(-dist, ties.method='max'), by = "masterID_1"][
+                              , rank2:=data.table::frank(-dist, ties.method='max'), by = "masterID_2"][
+                              order(-dist)][
+                              rank1==2, sum1:=collapse::fmean(dist), by="masterID_1"][
+                              rank2==2, sum2:=collapse::fmean(dist), by="masterID_2"][
+                              , rel1:=collapse::fmean(sum1, na.rm=T)/dist, by="masterID_1"][
+                              , rel2:=collapse::fmean(sum2, na.rm=T)/dist, by="masterID_2"][
+                              rank1==1 & rank2==1]
                           },
                           
                           executeLinking = function(data1, data2, blocks_data) {
@@ -109,17 +111,27 @@ Hismatch <- R6::R6Class("Hismatch",
                             data1 <- merge(data1, blocks_tmp, by=c(self$blocks), all.y=TRUE)
                             data2 <- merge(data2, blocks_tmp, by=c(self$blocks), all.y=TRUE)
                             
-                            data1 <- split(data1, data1$block_id)
-                            data2 <- split(data2, data2$block_id)
+                            # data1 <- collapse::rsplit(data1, data1$block_id, flatten = TRUE)
+                            # data2 <- collapse::rsplit(data2, data2$block_id, flatten = TRUE)
                             
-                            p <- progressr::progressor(steps = nrow(blocks_data))
+                            p <- progressr::progressor(steps = collapse::fnrow(blocks_data))
                                         
-                            future_map2_dfr(data1, data2, ~{
+                            future_map_dfr(1:collapse::fnrow(blocks_data), ~{
                               p()
-                              self$fuzzyMatch(.x, .y)
+                              self$fuzzyMatch(data1=data1, 
+                                              data2=data2, 
+                                              block_number=.x, 
+                                              blocks_tmp=blocks_data, 
+                                              blocks=self$blocks)
                             }, .options = furrr_options(globals=FALSE, stdout=FALSE))
                           },
-                                                  
+                                            
+                          # future_map2_dfr(data1, data2, ~{
+                          #   p()
+                          #   self$fuzzyMatch(.x, .y)
+                          # }, .options = furrr_options(globals=FALSE, stdout=FALSE))
+                          # },
+
                           mergeBackInData = function(merged_data, master1, master2){
                             skeleton <- merged_data[,.(masterID_1, masterID_2)]
                             skeleton <- merge(skeleton, master1, by='masterID_1')
@@ -181,9 +193,9 @@ Hismatch <- R6::R6Class("Hismatch",
                           getStatistics = function(){
                             merged_data <- self$full_match[,.(masterID_1, masterID_2)]
                             
-                            n_matches <- nrow(merged_data)
-                            n_data1 <- nrow(self$data1)
-                            n_data2 <- nrow(self$data2)
+                            n_matches <- collapse::fnrow(merged_data)
+                            n_data1 <- collapse::fnrow(self$data1)
+                            n_data2 <- collapse::fnrow(self$data2)
                             
                             message("Summary statistics")
                             output_message <- data.frame (title  = c("no. matches", "share matches (%)"),

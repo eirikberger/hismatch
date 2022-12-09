@@ -17,4 +17,5 @@ Imports:
     R6,
     scales,
     stringdist,
-    stringr
+    stringr,
+    collapse
