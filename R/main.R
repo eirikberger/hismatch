@@ -22,8 +22,10 @@ Hismatch <- R6::R6Class("Hismatch",
                           
                           initialize = function(data1 = NA,  data2 = NA, firstname=NA, surname=NA, 
                                                 blocks=NA, dist_thr=0.75, rel_thr=NA, max_block_size=50000) {
+                            
                             self$data1 <- data.table::copy(data1)
                             self$data2 <- data.table::copy(data2)
+                            
                             self$firstname <- firstname
                             self$surname <- surname
                             self$blocks <- blocks
@@ -78,14 +80,11 @@ Hismatch <- R6::R6Class("Hismatch",
                             return(list(dta_full, dta_comp, blocks))
                           },
                           
-                          fuzzyMatch = function(data1, data2, block_number, blocks_tmp, blocks){
+                          fuzzyMatch = function(data1, data2, block_number){
                             
-                            for (blocks_variable in blocks) {
-                              ex <- blocks_tmp[[c(block_number), blocks_variable]]
-                              data1 <- collapse::fsubset(data1, get(blocks_variable)==paste0(ex))
-                              data2 <- collapse::fsubset(data2, get(blocks_variable)==paste0(ex))
-                            }
-                            
+                            data1 <- collapse::fsubset(data1, block_id==block_number)
+                            data2 <- collapse::fsubset(data2, block_id==block_number)
+
                             if (length(data1)*length(data1)>self$max_block_size){
                               stop(paste('Block is too large (l_first: ', data1[['l_first']][1], ', l_sur: ', data1[['l_sur']][1], ')'))
                             }
@@ -111,27 +110,16 @@ Hismatch <- R6::R6Class("Hismatch",
                             data1 <- merge(data1, blocks_tmp, by=c(self$blocks), all.y=TRUE)
                             data2 <- merge(data2, blocks_tmp, by=c(self$blocks), all.y=TRUE)
                             
-                            # data1 <- collapse::rsplit(data1, data1$block_id, flatten = TRUE)
-                            # data2 <- collapse::rsplit(data2, data2$block_id, flatten = TRUE)
-                            
                             p <- progressr::progressor(steps = collapse::fnrow(blocks_data))
                                         
                             future_map_dfr(1:collapse::fnrow(blocks_data), ~{
                               p()
                               self$fuzzyMatch(data1=data1, 
                                               data2=data2, 
-                                              block_number=.x, 
-                                              blocks_tmp=blocks_data, 
-                                              blocks=self$blocks)
+                                              block_number=.x)
                             }, .options = furrr_options(globals=FALSE, stdout=FALSE))
                           },
-                                            
-                          # future_map2_dfr(data1, data2, ~{
-                          #   p()
-                          #   self$fuzzyMatch(.x, .y)
-                          # }, .options = furrr_options(globals=FALSE, stdout=FALSE))
-                          # },
-
+                      
                           mergeBackInData = function(merged_data, master1, master2){
                             skeleton <- merged_data[,.(masterID_1, masterID_2)]
                             skeleton <- merge(skeleton, master1, by='masterID_1')
@@ -169,7 +157,7 @@ Hismatch <- R6::R6Class("Hismatch",
                                 self$executeLinking(data1=tmp1[[2]], data2=tmp2[[2]], blocks_data=blocks_tmp)
                               })
                               
-                              self$merged_data <- copy(merged_data)
+                              self$merged_data <- data.table::copy(merged_data)
                               
                             }else{
                               message("Fuzzy matching already executed. Returns 'old' match with 'new' restrictions.")
@@ -198,7 +186,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             n_data2 <- collapse::fnrow(self$data2)
                             
                             message("Summary statistics")
-                            output_message <- data.frame (title  = c("no. matches", "share matches (%)"),
+                            output_message <- data.frame(title  = c("no. matches", "share matches (%)"),
                                                           data1 = c(scales::comma(n_data1), scales::percent(n_matches/n_data1, accuracy=0.01)), 
                                                           data2 = c(scales::comma(n_data2), scales::percent(n_matches/n_data2, accuracy=0.01)), 
                                                           matched = c(scales::comma(n_matches), scales::percent(n_matches/n_matches, accuracy=0.01))

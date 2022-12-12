@@ -105,7 +105,7 @@ Has information on the two datasets, and the details of how to link them.
 \if{latex}{\out{\hypertarget{method-Hismatch-fuzzyMatch}{}}}
 \subsection{Method \code{fuzzyMatch()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Hismatch$fuzzyMatch(data1, data2, block_number, blocks_tmp, blocks)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Hismatch$fuzzyMatch(data1, data2, block_number)}\if{html}{\out{</div>}}
 }
 
 }
