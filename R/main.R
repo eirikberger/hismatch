@@ -135,7 +135,9 @@ Hismatch <- R6::R6Class("Hismatch",
                           
                           runMatching = function(){
                             
-                            if (is.null(self$merged_data)) {
+                            status = is.null(self$merged_data)
+                            
+                            if (status) {
                               
                               tmp1 <- self$setupData(data_input=copy(self$data1), suffix='_1')  
                               tmp2 <- self$setupData(data_input=copy(self$data2), suffix='_2')
@@ -170,8 +172,10 @@ Hismatch <- R6::R6Class("Hismatch",
                             if(self$dist_thr!=FALSE){
                               merged_data <- merged_data[dist>self$dist_thr]}
                             
-                            merged_data <- self$mergeBackInData(merged_data, self$data1_pros, self$data2_pros[,c(self$blocks):=NULL])
-                            merged_data <- self$vectorReorder(dataset=merged_data)
+                            if (status){
+                              merged_data <- self$mergeBackInData(merged_data, self$data1_pros, self$data2_pros[,c(self$blocks):=NULL])
+                              merged_data <- self$vectorReorder(dataset=merged_data)
+                            }
                             
                             self$full_match <- merged_data
                             
