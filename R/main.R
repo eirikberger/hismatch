@@ -16,12 +16,14 @@ Hismatch <- R6::R6Class("Hismatch",
                           data1_pros = NULL, 
                           data2_pros = NULL, 
                           merged_data = NULL,
+                          letters = NULL,
                           
                           matching_by_variable = NULL,
                           max_block_size = NULL,
                           
                           initialize = function(data1 = NA,  data2 = NA, firstname=NA, surname=NA, 
-                                                blocks=NA, dist_thr=0.75, rel_thr=NA, max_block_size=50000) {
+                                                blocks=NA, dist_thr=0.75, rel_thr=NA, max_block_size=50000, 
+                                                letters=1) {
                             
                             self$data1 <- data.table::copy(data1)
                             self$data2 <- data.table::copy(data2)
@@ -36,6 +38,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             self$data1_pros <- NULL
                             self$data2_pros <- NULL
                             self$merged_data <- NULL
+                            self$letters <- letters
                             
                             self$matching_by_variable <- NULL
                             self$max_block_size <- max_block_size
@@ -47,8 +50,8 @@ Hismatch <- R6::R6Class("Hismatch",
                           
                           addLinkingVariables = function(data_input){
                             data_input[, full_name:=tolower(paste(eval(parse(text=self$firstname)), eval(parse(text=self$surname))))][
-                              , l_first := stringr::str_match(tolower(eval(parse(text=self$firstname))), "(^[:alpha:])")[,1]][
-                              !is.na(l_first)][, l_sur := stringr::str_match(full_name, " ([:alpha:])[a-zæøå.]*?$")[,2]][
+                              , l_first := stringr::str_match(tolower(eval(parse(text=self$firstname))), paste0("(^[:alpha:]{", self$letters,"})"))[,1]][
+                              !is.na(l_first)][, l_sur := stringr::str_match(full_name, paste0(" ([:alpha:]{", self$letters,"})[a-zæøå.]*?$"))[,2]][
                               !is.na(l_sur)][, masterID := .I]
                       },
                           
@@ -167,8 +170,9 @@ Hismatch <- R6::R6Class("Hismatch",
                             }
                             
                             if(self$rel_thr!=FALSE){
-                              merged_data <- merged_data[rel1<self$rel_thr | is.na(rel1)][
-                                rel2<self$rel_thr | is.na(self$rel2)]}
+                              merged_data <- merged_data[rel1<self$rel_thr | is.na(rel1)][rel2<as.integer(self$rel_thr) | is.na(rel2)]
+                              }
+                            
                             if(self$dist_thr!=FALSE){
                               merged_data <- merged_data[dist>self$dist_thr]}
                             
