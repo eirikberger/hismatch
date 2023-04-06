@@ -170,11 +170,11 @@ Hismatch <- R6::R6Class("Hismatch",
                             }
                             
                             if(self$rel_thr!=FALSE){
-                              merged_data <- merged_data[rel1<self$rel_thr | is.na(rel1)][rel2<as.integer(self$rel_thr) | is.na(rel2)]
+                              merged_data <- merged_data[rel1<=self$rel_thr | is.na(rel1)][rel2<=as.integer(self$rel_thr) | is.na(rel2)]
                               }
                             
                             if(self$dist_thr!=FALSE){
-                              merged_data <- merged_data[dist>self$dist_thr]}
+                              merged_data <- merged_data[dist>=self$dist_thr]}
                             
                             if (status){
                               merged_data <- self$mergeBackInData(merged_data, self$data1_pros, self$data2_pros[,c(self$blocks):=NULL])
