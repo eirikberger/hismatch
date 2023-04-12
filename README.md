@@ -1,5 +1,5 @@
 # hismatch
-R package to link historical individual-level data. Optimized to run on many cores.
+R package to link historical individual-level data. Optimized to run on many cores. Read documentation [here](https://eirikberger.github.io/hismatch/) or below. 
 
 ## Installation
 
