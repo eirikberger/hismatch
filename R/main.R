@@ -97,7 +97,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             merge_dataset <- merge(data1, data2, by='block_id', allow.cartesian=TRUE)
 
                             # string distance and execute matching rules
-                            merge_dataset[, dist:=stringdist::stringsim(full_name_1, full_name_2, method = matching_method)][
+                            merge_dataset[, dist:=stringdist::stringsim(full_name_1, full_name_2, method = self$matching_method)][
                               , rank1:=data.table::frank(-dist, ties.method='max'), by = "masterID_1"][
                               , rank2:=data.table::frank(-dist, ties.method='max'), by = "masterID_2"][
                               order(-dist)][
