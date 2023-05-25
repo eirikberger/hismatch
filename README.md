@@ -33,7 +33,8 @@ linkingTest <- Hismatch$new(data1 = dta1,
                             blocks=c(),
                             dist_thr=0.5, 
                             rel_thr=FALSE, 
-                            max_block_size=50000)
+                            max_block_size=50000, 
+                            matching_method=c("jw"))
 
 # define matching blocks
 linkingTest$blocks <- c('l_first', 'l_sur', 'byear', 'bmonth', 'bday', 'male')

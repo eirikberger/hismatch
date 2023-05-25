@@ -42,7 +42,8 @@ Has information on the two datasets, and the details of how to link them.
   dist_thr = 0.75,
   rel_thr = NA,
   max_block_size = 50000,
-  letters = 1
+  letters = 1,
+  matching_method = c("jw")
 )}\if{html}{\out{</div>}}
 }
 

@@ -17,13 +17,14 @@ Hismatch <- R6::R6Class("Hismatch",
                           data2_pros = NULL, 
                           merged_data = NULL,
                           letters = NULL,
+                          matching_method = NULL,
                           
                           matching_by_variable = NULL,
                           max_block_size = NULL,
                           
                           initialize = function(data1 = NA,  data2 = NA, firstname=NA, surname=NA, 
                                                 blocks=NA, dist_thr=0.75, rel_thr=NA, max_block_size=50000, 
-                                                letters=1) {
+                                                letters=1, matching_method=c("jw")) {
                             
                             self$data1 <- data.table::copy(data1)
                             self$data2 <- data.table::copy(data2)
@@ -39,6 +40,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             self$data2_pros <- NULL
                             self$merged_data <- NULL
                             self$letters <- letters
+                            self$matching_method <- matching_method
                             
                             self$matching_by_variable <- NULL
                             self$max_block_size <- max_block_size
@@ -95,7 +97,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             merge_dataset <- merge(data1, data2, by='block_id', allow.cartesian=TRUE)
 
                             # string distance and execute matching rules
-                            merge_dataset[, dist:=stringdist::stringsim(full_name_1, full_name_2, method = c("jw"))][
+                            merge_dataset[, dist:=stringdist::stringsim(full_name_1, full_name_2, method = matching_method)][
                               , rank1:=data.table::frank(-dist, ties.method='max'), by = "masterID_1"][
                               , rank2:=data.table::frank(-dist, ties.method='max'), by = "masterID_2"][
                               order(-dist)][
