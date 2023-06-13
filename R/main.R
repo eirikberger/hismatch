@@ -149,6 +149,8 @@ Hismatch <- R6::R6Class("Hismatch",
                               
                               self$data1_pros <- data.table::copy(tmp1[[1]])
                               self$data2_pros <- data.table::copy(tmp2[[1]])
+                              self$data1 <- self$addLinkingVariables(self$data1)
+                              self$data2 <- self$addLinkingVariables(self$data2)
                               
                               blocks_tmp <- merge(tmp1[[3]], tmp2[[3]], by=c(self$blocks))
                               
