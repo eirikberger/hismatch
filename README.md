@@ -71,7 +71,7 @@ saveHismatch('linkingTest', 'linkingTest.RDS')
 
 ## Iterative Matching
 
-There are cases where you want to start with the most restrictive blocking strategy, and than gradually lift blocks for observations that are not matched. In the following, I demonstrate how this can be implemented, where `block_list` is a list of the vectors used for blocking from the strictest to the least strict. This function matches observations in year `t` to `t+1` as defined by the `years` vector.
+There are cases where you want to start with the most restrictive blocking strategy, and than gradually lift blocks for observations that are not matched. In the following, I demonstrate how this can be implemented, where `block_list` is a list of the vectors used for blocking from the strictest to the least strict. This function matches observations in year `t` to `t+2` as defined by the `years` vector.
 
 ``` r
 linkingTest <- Hismatch$new(firstname = "firstname",
