@@ -25,6 +25,8 @@ Has information on the two datasets, and the details of how to link them.
 \item \href{#method-Hismatch-getMatchingRatesByVariable}{\code{Hismatch$getMatchingRatesByVariable()}}
 \item \href{#method-Hismatch-getMatchingRatesByVariable_DT}{\code{Hismatch$getMatchingRatesByVariable_DT()}}
 \item \href{#method-Hismatch-plotMatchingByGroup}{\code{Hismatch$plotMatchingByGroup()}}
+\item \href{#method-Hismatch-iterative_link}{\code{Hismatch$iterative_link()}}
+\item \href{#method-Hismatch-iterative_link_by_year}{\code{Hismatch$iterative_link_by_year()}}
 \item \href{#method-Hismatch-clone}{\code{Hismatch$clone()}}
 }
 }
@@ -180,6 +182,30 @@ Has information on the two datasets, and the details of how to link them.
 \subsection{Method \code{plotMatchingByGroup()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Hismatch$plotMatchingByGroup(type_restriction)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Hismatch-iterative_link"></a>}}
+\if{latex}{\out{\hypertarget{method-Hismatch-iterative_link}{}}}
+\subsection{Method \code{iterative_link()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Hismatch$iterative_link(data, vector_number, years, output_folder, block_list)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Hismatch-iterative_link_by_year"></a>}}
+\if{latex}{\out{\hypertarget{method-Hismatch-iterative_link_by_year}{}}}
+\subsection{Method \code{iterative_link_by_year()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Hismatch$iterative_link_by_year(
+  data,
+  years,
+  name_string,
+  output_folder,
+  block_list
+)}\if{html}{\out{</div>}}
 }
 
 }

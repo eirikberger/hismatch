@@ -2,8 +2,10 @@
 
 export("%nin%")
 export(Hismatch)
+export(getStatistics)
 export(is.not.null)
 export(readHismatchClass)
+export(rename_vars)
 export(saveHismatch)
 importFrom(data.table,":=")
 importFrom(data.table,.BY)
