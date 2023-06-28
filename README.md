@@ -76,7 +76,7 @@ There are cases where you want to start with the most restrictive blocking strat
 ``` r
 linkingTest <- Hismatch$new(firstname = "firstname",
                             surname = "carryforward_surname",
-                            dist_thr = 0.7,
+                            dist_thr = 0.90,
                             rel_thr = FALSE,
                             max_block_size = 50000,
                             letters = 1,
@@ -90,7 +90,29 @@ bl3 <- c("l_first", "l_sur", "komnr", "residence")
 bl4 <- c("l_first", "l_sur", "komnr", "residence", "occupation")
 block_list <- list(bl4, bl3, bl2, bl1)
 
-linkingTest$iterative_link_by_year(dta, years, "Norway", "linking_folder", block_list)
+linkingTest$iterative_link_by_year(dta, years, "Norway", "iterative_linking", block_list, 2)
 ```
 
-I will separate out a function to do iterative linking between any two sources in the future. 
+Its also possible to link to arbitrary sources together.
+
+``` r
+linkingTest <- Hismatch$new(data1 = dta1, 
+                            data2 = dta2
+                            firstname = "firstname",
+                            surname = "carryforward_surname",
+                            dist_thr = 0.90,
+                            rel_thr = FALSE,
+                            max_block_size = 50000,
+                            letters = 1,
+                            matching_method = c("jw")
+)
+
+# Linking
+bl1 <- c("l_first", "l_sur")
+bl2 <- c("l_first", "l_sur", "komnr")
+bl3 <- c("l_first", "l_sur", "komnr", "residence")
+bl4 <- c("l_first", "l_sur", "komnr", "residence", "occupation")
+block_list <- list(bl4, bl3, bl2, bl1)
+
+linkingTest$iterative_link("iterative_linking", block_list, "Norway_to_random_source", "dataset_1", "dataset_2")
+```

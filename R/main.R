@@ -240,7 +240,7 @@ Hismatch <- R6::R6Class("Hismatch",
                               scale_y_continuous(labels = scales::percent)
                           },
                           
-                          iterative_link = function(data, output_folder, block_list, name_string, source_from, source_to){
+                          iterative_link = function(output_folder, block_list, name_string, source_from, source_to){
                             
                             block <- copy(block_list)
                             input1 <- copy(self$data1)
@@ -332,7 +332,7 @@ Hismatch <- R6::R6Class("Hismatch",
                               self$data1 <- copy(data[year == years[vector_number]])
                               self$data2 <- copy(data[year == years[vector_number + as.integer(plus_years)]])
                               
-                              self$iterative_link(data, output_folder, block_list, name_string, as.character(years[vector_number]), as.character(years[vector_number+1]))
+                              self$iterative_link(output_folder, block_list, name_string, as.character(years[vector_number]), as.character(years[vector_number+1]))
                             }
                           }
                         )

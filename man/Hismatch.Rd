@@ -191,7 +191,6 @@ Has information on the two datasets, and the details of how to link them.
 \subsection{Method \code{iterative_link()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Hismatch$iterative_link(
-  data,
   output_folder,
   block_list,
   name_string,
