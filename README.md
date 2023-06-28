@@ -67,3 +67,30 @@ linkingTest$blocks
 linkingTest <- readHismatchClass('linkingTest.RDS')
 saveHismatch('linkingTest', 'linkingTest.RDS')
 ```
+
+
+## Iterative Matching
+
+There are cases where you want to start with the most restrictive blocking strategy, and than gradually lift blocks for observations that are not matched. In the following, I demonstrate how this can be implemented, where `block_list` is a list of the vectors used for blocking from the strictest to the least strict. This function matches observations in year `t` to `t+1` as defined by the `years` vector.
+
+``` r
+linkingTest <- Hismatch$new(firstname = "firstname",
+                            surname = "carryforward_surname",
+                            dist_thr = 0.7,
+                            rel_thr = FALSE,
+                            max_block_size = 50000,
+                            letters = 1,
+                            matching_method = c("jw")
+)
+
+# Linking
+bl1 <- c("l_first", "l_sur")
+bl2 <- c("l_first", "l_sur", "komnr")
+bl3 <- c("l_first", "l_sur", "komnr", "residence")
+bl4 <- c("l_first", "l_sur", "komnr", "residence", "occupation")
+block_list <- list(bl4, bl3, bl2, bl1)
+
+linkingTest$iterative_link_by_year(dta, years, "Norway", "linking_folder", block_list)
+```
+
+I will separate out a function to do iterative linking between any two sources in the future. 
