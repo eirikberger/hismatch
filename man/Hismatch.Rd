@@ -190,7 +190,14 @@ Has information on the two datasets, and the details of how to link them.
 \if{latex}{\out{\hypertarget{method-Hismatch-iterative_link}{}}}
 \subsection{Method \code{iterative_link()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Hismatch$iterative_link(data, vector_number, years, output_folder, block_list)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Hismatch$iterative_link(
+  data,
+  vector_number,
+  years,
+  output_folder,
+  block_list,
+  name_string
+)}\if{html}{\out{</div>}}
 }
 
 }

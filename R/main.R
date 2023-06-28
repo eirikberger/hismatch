@@ -242,7 +242,7 @@ Hismatch <- R6::R6Class("Hismatch",
                               scale_y_continuous(labels = scales::percent)
                           },
                           
-                          iterative_link = function(data, vector_number, years, output_folder, block_list){
+                          iterative_link = function(data, vector_number, years, output_folder, block_list, name_string){
                             
                             print(paste("Linking", years[vector_number], "with", years[vector_number+1]))
                             
@@ -330,7 +330,7 @@ Hismatch <- R6::R6Class("Hismatch",
                           iterative_link_by_year = function(data, years, name_string, output_folder, block_list) {
                             
                             for(i in 1:(length(years) - 1)){
-                              self$iterative_link(data, i, years, output_folder, block_list)
+                              self$iterative_link(data, i, years, output_folder, block_list, name_string)
                             }
                           }
                         )
