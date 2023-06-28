@@ -93,7 +93,7 @@ block_list <- list(bl4, bl3, bl2, bl1)
 linkingTest$iterative_link_by_year(dta, years, "Norway", "iterative_linking", block_list, 2)
 ```
 
-Its also possible to link to arbitrary sources together.
+Its also possible to link two arbitrary sources together.
 
 ``` r
 linkingTest <- Hismatch$new(data1 = dta1, 
