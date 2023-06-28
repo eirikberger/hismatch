@@ -64,13 +64,11 @@ Hismatch <- R6::R6Class("Hismatch",
                           },
                           
                           createLinkingData = function(data_input){
-                            print(self$blocks)
                             keep <- append(unlist(strsplit(self$blocks, ", ")), c('full_name', 'masterID'))
                             data_input[,..keep]
                           },
                           
                           createBlocks = function(data){
-                            print(self$blocks)
                             keep <- unlist(strsplit(self$blocks, ", "))
                             comb <- data[,..keep][!is.na(l_first) & !is.na(l_sur)]
                             unique(comb, by = keep)
@@ -257,10 +255,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             
                             self$data1 <- copy(data[year == years[vector_number]])
                             self$data2 <- copy(data[year == years[vector_number + 1]])
-                            
-                            # print(self$data1)
-                            # print(self$data2)
-                            
+                          
                             self$runMatching()
                             
                             save_matches <- copy(self$full_match)
