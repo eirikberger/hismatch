@@ -192,11 +192,11 @@ Has information on the two datasets, and the details of how to link them.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Hismatch$iterative_link(
   data,
-  vector_number,
-  years,
   output_folder,
   block_list,
-  name_string
+  name_string,
+  source_from,
+  source_to
 )}\if{html}{\out{</div>}}
 }
 
@@ -211,7 +211,8 @@ Has information on the two datasets, and the details of how to link them.
   years,
   name_string,
   output_folder,
-  block_list
+  block_list,
+  plus_years = 1
 )}\if{html}{\out{</div>}}
 }
 

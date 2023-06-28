@@ -243,6 +243,9 @@ Hismatch <- R6::R6Class("Hismatch",
                           iterative_link = function(data, output_folder, block_list, name_string, source_from, source_to){
                             
                             block <- copy(block_list)
+                            input1 <- copy(self$data1)
+                            input2 <- copy(self$data2)
+                            
                             
                             if (is.list(block)){
                               self$blocks <- block[[1]]
@@ -254,8 +257,10 @@ Hismatch <- R6::R6Class("Hismatch",
                             self$runMatching()
                             
                             save_matches <- copy(self$full_match)
+                            
                             l1 <- paste0(self$blocks, "_1")
                             l2 <- paste0(self$blocks, "_2")
+                            
                             save_matches <- save_matches[, (l1) := .SD, .SDcols = self$blocks]
                             save_matches <- save_matches[, (l2) := .SD, .SDcols = self$blocks]
                             save_matches[, (self$blocks) := NULL]
@@ -295,7 +300,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             ###
                             
                             # save merge statistics
-                            merge_statistics <- setDT(getStatistics(save_matches, self$data1, self$data2))
+                            merge_statistics <- setDT(getStatistics(save_matches, input1, input2))
                             merge_statistics[, from := source_from]
                             merge_statistics[, to := source_to]
                             merge_statistics[, type := name_string]
@@ -308,7 +313,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             
                             # Save results
                             file1 <- paste0(output_folder, "/link_", as.character(name_string), "_", source_from, "_to_",  source_to, ".csv")
-                            file2 <- paste0(output_folder, "/stat_", as.character(name_string), "_", source_from, "_to_",  source_from, ".csv")
+                            file2 <- paste0(output_folder, "/stat_", as.character(name_string), "_", source_from, "_to_",  source_to, ".csv")
                             file3 <- paste0(output_folder, "/unmatched_", as.character(name_string), "_", source_from, "_to_", source_to, ".csv")
                             
                             # iteratively bind the results rowwise
@@ -317,14 +322,14 @@ Hismatch <- R6::R6Class("Hismatch",
                             fwrite(unmatched1, file3, sep = ";")
                           },
                           
-                          iterative_link_by_year = function(data, years, name_string, output_folder, block_list) {
+                          iterative_link_by_year = function(data, years, name_string, output_folder, block_list, plus_years=1) {
                             
-                            for(vector_number in 1:(length(years) - 1)){
+                            for(vector_number in 1:(length(years) - plus_years)){
                               
-                              print(paste("Linking", years[vector_number], "with", years[vector_number+1]))
+                              print(paste("Linking", years[vector_number], "with", years[vector_number+plus_years]))
                               
                               self$data1 <- copy(data[year == years[vector_number]])
-                              self$data2 <- copy(data[year == years[vector_number + 1]])
+                              self$data2 <- copy(data[year == years[vector_number + plus_years]])
                               
                               self$iterative_link(data, output_folder, block_list, name_string, as.character(years[vector_number]), as.character(years[vector_number+1]))
                             }
