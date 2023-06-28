@@ -53,8 +53,8 @@ Hismatch <- R6::R6Class("Hismatch",
                           addLinkingVariables = function(data_input){
                             data_input[, full_name:=tolower(paste(eval(parse(text=self$firstname)), eval(parse(text=self$surname))))][
                               , l_first := stringr::str_match(tolower(eval(parse(text=self$firstname))), paste0("(^[:alpha:]{", self$letters,"})"))[,1]][
-                                !is.na(l_first)][, l_sur := stringr::str_match(full_name, paste0(" ([:alpha:]{", self$letters,"})[a-zæøå.]*?$"))[,2]][
-                                  !is.na(l_sur)][, masterID := .I]
+                              !is.na(l_first)][, l_sur := stringr::str_match(full_name, paste0(" ([:alpha:]{", self$letters,"})[a-zæøå.]*?$"))[,2]][
+                              !is.na(l_sur)][, masterID := .I]
                           },
                           
                           setNames = function(data_input, suffix){
@@ -101,13 +101,13 @@ Hismatch <- R6::R6Class("Hismatch",
                             # string distance and execute matching rules
                             merge_dataset[, dist:=stringdist::stringsim(full_name_1, full_name_2, method = self$matching_method)][
                               , rank1:=data.table::frank(-dist, ties.method='max'), by = "masterID_1"][
-                                , rank2:=data.table::frank(-dist, ties.method='max'), by = "masterID_2"][
-                                  order(-dist)][
-                                    rank1==2, sum1:=collapse::fmean(dist), by="masterID_1"][
-                                      rank2==2, sum2:=collapse::fmean(dist), by="masterID_2"][
-                                        , rel1:=collapse::fmean(sum1, na.rm=T)/dist, by="masterID_1"][
-                                          , rel2:=collapse::fmean(sum2, na.rm=T)/dist, by="masterID_2"][
-                                            rank1==1 & rank2==1]
+                              , rank2:=data.table::frank(-dist, ties.method='max'), by = "masterID_2"][
+                              order(-dist)][
+                              rank1==2, sum1:=collapse::fmean(dist), by="masterID_1"][
+                              rank2==2, sum2:=collapse::fmean(dist), by="masterID_2"][
+                              , rel1:=collapse::fmean(sum1, na.rm=T)/dist, by="masterID_1"][
+                              , rel2:=collapse::fmean(sum2, na.rm=T)/dist, by="masterID_2"][
+                              rank1==1 & rank2==1]
                           },
                           
                           executeLinking = function(data1, data2, blocks_data) {
@@ -255,9 +255,11 @@ Hismatch <- R6::R6Class("Hismatch",
                               self$blocks <- block
                             }
                             
-                            self$data1 <- data[year == years[vector_number]]
-                            self$data1 <- data[year == years[vector_number+1]]
+                            self$data1 <- copy(data[year == years[vector_number]])
+                            self$data2 <- copy(data[year == years[vector_number + 1]])
                             
+                            # print(self$data1)
+                            # print(self$data2)
                             
                             self$runMatching()
                             
