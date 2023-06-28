@@ -332,7 +332,7 @@ Hismatch <- R6::R6Class("Hismatch",
                               self$data1 <- copy(data[year == years[vector_number]])
                               self$data2 <- copy(data[year == years[vector_number + as.integer(plus_years)]])
                               
-                              self$iterative_link(output_folder, block_list, name_string, as.character(years[vector_number]), as.character(years[vector_number+1]))
+                              self$iterative_link(output_folder, block_list, name_string, as.character(years[vector_number]), as.character(years[vector_number + as.integer(plus_years)]))
                             }
                           }
                         )
