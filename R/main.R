@@ -319,13 +319,13 @@ Hismatch <- R6::R6Class("Hismatch",
                           
                           iterative_link_by_year = function(data, years, name_string, output_folder, block_list) {
                             
-                            print(paste("Linking", years[vector_number], "with", years[vector_number+1]))
-                            
-                            self$data1 <- copy(data[year == years[vector_number]])
-                            self$data2 <- copy(data[year == years[vector_number + 1]])
-                            
-                            
-                            for(i in 1:(length(years) - 1)){
+                            for(vector_number in 1:(length(years) - 1)){
+                              
+                              print(paste("Linking", years[vector_number], "with", years[vector_number+1]))
+                              
+                              self$data1 <- copy(data[year == years[vector_number]])
+                              self$data2 <- copy(data[year == years[vector_number + 1]])
+                              
                               self$iterative_link(data, output_folder, block_list, name_string, as.character(years[vector_number]), as.character(years[vector_number+1]))
                             }
                           }
