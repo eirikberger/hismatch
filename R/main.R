@@ -240,9 +240,7 @@ Hismatch <- R6::R6Class("Hismatch",
                               scale_y_continuous(labels = scales::percent)
                           },
                           
-                          iterative_link = function(data, vector_number, years, output_folder, block_list, name_string){
-                            
-                            print(paste("Linking", years[vector_number], "with", years[vector_number+1]))
+                          iterative_link = function(data, output_folder, block_list, name_string, source_from, source_to){
                             
                             block <- copy(block_list)
                             
@@ -253,9 +251,6 @@ Hismatch <- R6::R6Class("Hismatch",
                               self$blocks <- block
                             }
                             
-                            self$data1 <- copy(data[year == years[vector_number]])
-                            self$data2 <- copy(data[year == years[vector_number + 1]])
-                          
                             self$runMatching()
                             
                             save_matches <- copy(self$full_match)
@@ -300,9 +295,9 @@ Hismatch <- R6::R6Class("Hismatch",
                             ###
                             
                             # save merge statistics
-                            merge_statistics <- setDT(getStatistics(save_matches, data[year == years[vector_number]], data[year == years[vector_number+1]]))
-                            merge_statistics[, from := years[vector_number]]
-                            merge_statistics[, to := years[vector_number+1]]
+                            merge_statistics <- setDT(getStatistics(save_matches, self$data1, self$data2))
+                            merge_statistics[, from := source_from]
+                            merge_statistics[, to := source_to]
                             merge_statistics[, type := name_string]
                             
                             # unmatached
@@ -312,9 +307,9 @@ Hismatch <- R6::R6Class("Hismatch",
                             unmatched2 <- unmatched2[, masterID := NULL]
                             
                             # Save results
-                            file1 <- paste0(output_folder, "/link_", as.character(name_string), "_", years[vector_number], "_to_",  years[vector_number+1],".csv")
-                            file2 <- paste0(output_folder, "/stat_", as.character(name_string), "_", years[vector_number], "_to_",  years[vector_number+1],".csv")
-                            file3 <- paste0(output_folder, "/unmatched_", as.character(name_string), "_", years[vector_number], "_to_",  years[vector_number+1],".csv")
+                            file1 <- paste0(output_folder, "/link_", as.character(name_string), "_", source_from, "_to_",  source_to, ".csv")
+                            file2 <- paste0(output_folder, "/stat_", as.character(name_string), "_", source_from, "_to_",  source_from, ".csv")
+                            file3 <- paste0(output_folder, "/unmatched_", as.character(name_string), "_", source_from, "_to_", source_to, ".csv")
                             
                             # iteratively bind the results rowwise
                             fwrite(merge_statistics, file2, sep = ";")
@@ -324,8 +319,14 @@ Hismatch <- R6::R6Class("Hismatch",
                           
                           iterative_link_by_year = function(data, years, name_string, output_folder, block_list) {
                             
+                            print(paste("Linking", years[vector_number], "with", years[vector_number+1]))
+                            
+                            self$data1 <- copy(data[year == years[vector_number]])
+                            self$data2 <- copy(data[year == years[vector_number + 1]])
+                            
+                            
                             for(i in 1:(length(years) - 1)){
-                              self$iterative_link(data, i, years, output_folder, block_list, name_string)
+                              self$iterative_link(data, output_folder, block_list, name_string, as.character(years[vector_number]), as.character(years[vector_number+1]))
                             }
                           }
                         )
