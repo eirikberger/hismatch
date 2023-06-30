@@ -45,7 +45,8 @@ Has information on the two datasets, and the details of how to link them.
   rel_thr = NA,
   max_block_size = 50000,
   letters = 1,
-  matching_method = c("jw")
+  matching_method = c("jw"),
+  unify_middlenames = FALSE
 )}\if{html}{\out{</div>}}
 }
 

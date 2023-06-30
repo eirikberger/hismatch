@@ -21,10 +21,11 @@ Hismatch <- R6::R6Class("Hismatch",
                           
                           matching_by_variable = NULL,
                           max_block_size = NULL,
+                          unify_middlenames = NULL,
                           
                           initialize = function(data1 = NA,  data2 = NA, firstname=NA, surname=NA, 
                                                 blocks=NA, dist_thr=0.75, rel_thr=NA, max_block_size=50000, 
-                                                letters=1, matching_method=c("jw")) {
+                                                letters=1, matching_method=c("jw"), unify_middlenames = FALSE) {
                             
                             self$data1 <- data.table::copy(data1)
                             self$data2 <- data.table::copy(data2)
@@ -44,6 +45,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             
                             self$matching_by_variable <- NULL
                             self$max_block_size <- max_block_size
+                            self$unify_middlenames = unify_middlenames
                           }, 
                           
                           print = function() {
@@ -96,8 +98,14 @@ Hismatch <- R6::R6Class("Hismatch",
                             
                             merge_dataset <- merge(data1, data2, by='block_id', allow.cartesian=TRUE)
                             
+                            if (self$unify_middlenames){
+                              merge_dataset <- merge_dataset[, c("new_full_name_1", "new_full_name_2") := unify_names(full_name_1, full_name_2)]
+                            }else{
+                              merge_dataset <- merge_dataset[, c("new_full_name_1", "new_full_name_2") := .(full_name_1, full_name_2)]
+                            }
+                            
                             # string distance and execute matching rules
-                            merge_dataset[, dist:=stringdist::stringsim(full_name_1, full_name_2, method = self$matching_method)][
+                            merge_dataset[, dist:=stringdist::stringsim(new_full_name_1, new_full_name_2, method = self$matching_method)][
                               , rank1:=data.table::frank(-dist, ties.method='max'), by = "masterID_1"][
                               , rank2:=data.table::frank(-dist, ties.method='max'), by = "masterID_2"][
                               order(-dist)][
@@ -105,7 +113,8 @@ Hismatch <- R6::R6Class("Hismatch",
                               rank2==2, sum2:=collapse::fmean(dist), by="masterID_2"][
                               , rel1:=collapse::fmean(sum1, na.rm=T)/dist, by="masterID_1"][
                               , rel2:=collapse::fmean(sum2, na.rm=T)/dist, by="masterID_2"][
-                              rank1==1 & rank2==1]
+                              rank1==1 & rank2==1][
+                              , c("new_full_name_1", "new_full_name_2") := NULL]
                           },
                           
                           executeLinking = function(data1, data2, blocks_data) {
