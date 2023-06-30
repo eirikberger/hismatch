@@ -120,8 +120,28 @@
 <div class="section level2">
 <h2 id="iterative-matching">Iterative Matching<a class="anchor" aria-label="anchor" href="#iterative-matching"></a>
 </h2>
-<p>There are cases where you want to start with the most restrictive blocking strategy, and than gradually lift blocks for observations that are not matched. In the following, I demonstrate how this can be implemented, where <code>block_list</code> is a list of the vectors used for blocking from the strictest to the least strict. This function matches observations in year <code>t</code> to <code>t+2</code> as defined by the <code>years</code> vector.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>There are cases where you want to start with the most restrictive blocking strategy, and than gradually lift blocks for observations that are not matched. In the following, I demonstrate how this can be implemented, where <code>block_list</code> is a list of the vectors used for blocking from the strictest to the least strict.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>linkingTest <span class="ot">&lt;-</span> Hismatch<span class="sc">$</span><span class="fu">new</span>(<span class="at">data1 =</span> dta1, </span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                            <span class="at">data2 =</span> dta2</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                            <span class="at">firstname =</span> <span class="st">"firstname"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>                            <span class="at">surname =</span> <span class="st">"carryforward_surname"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>                            <span class="at">dist_thr =</span> <span class="fl">0.90</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>                            <span class="at">rel_thr =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>                            <span class="at">max_block_size =</span> <span class="dv">50000</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>                            <span class="at">letters =</span> <span class="dv">1</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>                            <span class="at">matching_method =</span> <span class="fu">c</span>(<span class="st">"jw"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>)</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co"># Linking</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>bl1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"l_first"</span>, <span class="st">"l_sur"</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>bl2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"l_first"</span>, <span class="st">"l_sur"</span>, <span class="st">"komnr"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>bl3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"l_first"</span>, <span class="st">"l_sur"</span>, <span class="st">"komnr"</span>, <span class="st">"residence"</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>bl4 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"l_first"</span>, <span class="st">"l_sur"</span>, <span class="st">"komnr"</span>, <span class="st">"residence"</span>, <span class="st">"occupation"</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>block_list <span class="ot">&lt;-</span> <span class="fu">list</span>(bl4, bl3, bl2, bl1)</span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>linkingTest<span class="sc">$</span><span class="fu">iterative_link</span>(<span class="st">"iterative_linking"</span>, block_list, <span class="st">"Norway_to_random_source"</span>, <span class="st">"dataset_1"</span>, <span class="st">"dataset_2"</span>)</span></code></pre></div>
+<p><code>iterative_link_by_year</code> is a wrapper around this function, and matches observations by year from the same <code>data.table</code>. This function matches observations in year <code>t</code> to <code>t+2</code> as defined by the <code>years</code> vector.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">linkingTest</span> <span class="op">&lt;-</span> <span class="va"><a href="reference/Hismatch.html">Hismatch</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span>firstname <span class="op">=</span> <span class="st">"firstname"</span>,</span>
 <span>                            surname <span class="op">=</span> <span class="st">"carryforward_surname"</span>,</span>
 <span>                            dist_thr <span class="op">=</span> <span class="fl">0.90</span>,</span>
@@ -139,26 +159,18 @@
 <span><span class="va">block_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">bl4</span>, <span class="va">bl3</span>, <span class="va">bl2</span>, <span class="va">bl1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">linkingTest</span><span class="op">$</span><span class="fu">iterative_link_by_year</span><span class="op">(</span><span class="va">dta</span>, <span class="va">years</span>, <span class="st">"Norway"</span>, <span class="st">"iterative_linking"</span>, <span class="va">block_list</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p>Its also possible to link two arbitrary sources together.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>linkingTest <span class="ot">&lt;-</span> Hismatch<span class="sc">$</span><span class="fu">new</span>(<span class="at">data1 =</span> dta1, </span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>                            <span class="at">data2 =</span> dta2</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>                            <span class="at">firstname =</span> <span class="st">"firstname"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>                            <span class="at">surname =</span> <span class="st">"carryforward_surname"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>                            <span class="at">dist_thr =</span> <span class="fl">0.90</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>                            <span class="at">rel_thr =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>                            <span class="at">max_block_size =</span> <span class="dv">50000</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>                            <span class="at">letters =</span> <span class="dv">1</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>                            <span class="at">matching_method =</span> <span class="fu">c</span>(<span class="st">"jw"</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>)</span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="co"># Linking</span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>bl1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"l_first"</span>, <span class="st">"l_sur"</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>bl2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"l_first"</span>, <span class="st">"l_sur"</span>, <span class="st">"komnr"</span>)</span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>bl3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"l_first"</span>, <span class="st">"l_sur"</span>, <span class="st">"komnr"</span>, <span class="st">"residence"</span>)</span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>bl4 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"l_first"</span>, <span class="st">"l_sur"</span>, <span class="st">"komnr"</span>, <span class="st">"residence"</span>, <span class="st">"occupation"</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>block_list <span class="ot">&lt;-</span> <span class="fu">list</span>(bl4, bl3, bl2, bl1)</span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a></span>
-<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>linkingTest<span class="sc">$</span><span class="fu">iterative_link</span>(<span class="st">"iterative_linking"</span>, block_list, <span class="st">"Norway_to_random_source"</span>, <span class="st">"dataset_1"</span>, <span class="st">"dataset_2"</span>)</span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="unifying-names">Unifying Names<a class="anchor" aria-label="anchor" href="#unifying-names"></a>
+</h2>
+<p>A frequent problem in name matching is that some sources include full middle names, some include only the first letter and some ignore them altogether. If two sources use different approaches, then it could increases error. The function <code><a href="reference/unify_names.html">unify_names()</a></code> solves this by checking the naming convention for the two possible matches and makes them consistent. See an example produced by ChatGPT below.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>   name_from_dataset1  name_from_dataset2    new_name_1    new_name_2</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span>   John Michael Doe          John M Doe    John M Doe    John M Doe</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="dv">2</span><span class="sc">:</span>         Jane M Doe   Jane Michaela Doe    Jane M Doe    Jane M Doe</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="dv">3</span><span class="sc">:</span>       Robert Smith   Robert Alan Smith  Robert Smith  Robert Smith</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="dv">4</span><span class="sc">:</span>      Ann B Johnson Ann Bethany Johnson Ann B Johnson Ann B Johnson</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="dv">5</span><span class="sc">:</span>     Chris G W Bush          Chris Bush    Chris Bush    Chris Bush</span></code></pre></div>
+<p>Set <code>unify_middlenames = TRUE</code> in <code>Hismatch$new()</code> do activate this functionality.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">

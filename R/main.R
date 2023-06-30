@@ -99,7 +99,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             merge_dataset <- merge(data1, data2, by='block_id', allow.cartesian=TRUE)
                             
                             if (self$unify_middlenames){
-                              merge_dataset <- merge_dataset[, c("new_full_name_1", "new_full_name_2") := unify_names(full_name_1, full_name_2)]
+                              merge_dataset <- merge_dataset[, c("new_full_name_1", "new_full_name_2") := Hismatch:::unify_names(full_name_1, full_name_2)]
                             }else{
                               merge_dataset <- merge_dataset[, c("new_full_name_1", "new_full_name_2") := .(full_name_1, full_name_2)]
                             }
