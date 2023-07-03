@@ -50,8 +50,8 @@ unify_names <- function(name1, name2) {
     
     # If one name has abbreviated middle names, abbreviate the middle names in the other name
     if (any(nchar(middle1) == 1) | any(nchar(middle2) == 1)) {
-      result_name1[i] <- paste(c(words1[1], str_sub(middle1, 1, 1), words1[length(words1)]), collapse = " ")
-      result_name2[i] <- paste(c(words2[1], str_sub(middle2, 1, 1), words2[length(words2)]), collapse = " ")
+      result_name1[i] <- paste(c(words1[1], stringr::str_sub(middle1, 1, 1), words1[length(words1)]), collapse = " ")
+      result_name2[i] <- paste(c(words2[1], stringr::str_sub(middle2, 1, 1), words2[length(words2)]), collapse = " ")
       next
     }
   }
