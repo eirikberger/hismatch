@@ -19,8 +19,8 @@ unify_names <- function(name1, name2) {
   for(i in seq_along(name1)) {
     
     # Split the names into words
-    words1 <- str_split(name1[i], " ")[[1]]
-    words2 <- str_split(name2[i], " ")[[1]]
+    words1 <- stringr::str_split(name1[i], " ")[[1]]
+    words2 <- stringr::str_split(name2[i], " ")[[1]]
     
     # If the first or last word in either name is too short, return NA
     if (nchar(words1[1]) <= 1 | nchar(words1[length(words1)]) <= 1 | 
