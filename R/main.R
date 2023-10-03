@@ -323,12 +323,14 @@ Hismatch <- R6::R6Class("Hismatch",
                             # Save results
                             file1 <- paste0(output_folder, "/link_", as.character(name_string), "_", source_from, "_to_",  source_to, ".csv")
                             file2 <- paste0(output_folder, "/stat_", as.character(name_string), "_", source_from, "_to_",  source_to, ".csv")
-                            file3 <- paste0(output_folder, "/unmatched_", as.character(name_string), "_", source_from, "_to_", source_to, ".csv")
+                            file3 <- paste0(output_folder, "/unmatched_", as.character(name_string), "_", source_from, "_to_", source_to, "_1.csv")
+                            file3 <- paste0(output_folder, "/unmatched_", as.character(name_string), "_", source_from, "_to_", source_to, "_2.csv")
                             
                             # iteratively bind the results rowwise
                             fwrite(merge_statistics, file2, sep = ";")
                             fwrite(save_matches, file1, sep = ";")
                             fwrite(unmatched1, file3, sep = ";")
+                            fwrite(unmatched1, file4, sep = ";")
                           },
                           
                           iterative_link_by_year = function(data, years, name_string, output_folder, block_list, plus_years=1) {
