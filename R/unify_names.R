@@ -22,13 +22,13 @@ unify_names <- function(name1, name2) {
     words1 <- stringr::str_split(name1[i], " ")[[1]]
     words2 <- stringr::str_split(name2[i], " ")[[1]]
     
-    # If the first or last word in either name is too short, return NA
-    if (nchar(words1[1]) <= 1 | nchar(words1[length(words1)]) <= 1 | 
-        nchar(words2[1]) <= 1 | nchar(words2[length(words2)]) <= 1) {
-      result_name1[i] <- NA_character_
-      result_name2[i] <- NA_character_
-      next
-    }
+    # # If the first or last word in either name is too short, return NA
+    # if (nchar(words1[1]) <= 1 | nchar(words1[length(words1)]) <= 1 | 
+    #     nchar(words2[1]) <= 1 | nchar(words2[length(words2)]) <= 1) {
+    #   result_name1[i] <- NA_character_
+    #   result_name2[i] <- NA_character_
+    #   next
+    # }
     
     # Get the middle words of the names
     middle1 <- words1[-c(1, length(words1))]
