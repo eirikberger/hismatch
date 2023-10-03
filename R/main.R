@@ -332,7 +332,7 @@ Hismatch <- R6::R6Class("Hismatch",
                             fwrite(merge_statistics, file2, sep = ";")
                             fwrite(save_matches, file1, sep = ";")
                             fwrite(unmatched1, file3, sep = ";")
-                            fwrite(unmatched1, file4, sep = ";")
+                            fwrite(unmatched2, file4, sep = ";")
                           },
                           
                           iterative_link_by_year = function(data, years, name_string, output_folder, block_list, plus_years=1) {
